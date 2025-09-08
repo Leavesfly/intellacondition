@@ -21,40 +21,92 @@ import com.leavesfly.iac.evalute.EvaluteResult;
 import com.leavesfly.iac.execute.domain.UserComfortFunc;
 
 /**
- * 数据工厂提供程序需要运行的数据以及数据中转站
+ * 数据工厂类
  * 
- * @author yefei.yf
- *
+ * 该类是系统的核心数据提供者和中转站，负责：
+ * 1. 加载和管理用户舒适度函数
+ * 2. 管理地理位置信息（用户和传感器）
+ * 3. 管理温度预测模型函数
+ * 4. 存储和提供评估结果
+ * 
+ * 采用单例模式确保全局唯一实例
  */
 public final class DataFactory {
 
+	/**
+	 * DataFactory单例实例
+	 */
 	private static volatile DataFactory dataFactory;
 
+	/**
+	 * 用户舒适度函数集合
+	 */
 	private volatile Collection<UserComfortFunc> userComfortFuncSet;
+	
+	/**
+	 * 用户舒适度函数映射表（用户ID -> 舒适度函数）
+	 */
 	private volatile Map<String, UserComfortFunc> userComfortFuncMap;
+	
+	/**
+	 * 用户期望温度映射表（用户ID -> 期望温度）
+	 */
 	private volatile Map<String, Float> userWantTempMap;
 
+	/**
+	 * 用户地理位置映射表（用户ID -> 地理位置）
+	 */
 	private volatile Map<String, GeoPoint> userGeoTable;
+	
+	/**
+	 * 传感器地理位置映射表（传感器ID -> 地理位置）
+	 */
 	private volatile Map<String, GeoPoint> sensorGeoTbale;
 
+	/**
+	 * 用户ID与周围传感器ID列表的映射表
+	 */
 	private volatile Map<String, List<String>> userIdSensorIdsMap;
+	
+	/**
+	 * 用户ID与周围传感器温度预测函数列表的映射表
+	 */
 	private volatile Map<String, List<PtFitFunc>> userIdSensorFuncsMap;
+	
+	/**
+	 * 功率范围数组
+	 */
 	private volatile PowerRange[] powerRangeArray;
 
+	/**
+	 * 传感器温度预测函数集合
+	 */
 	private volatile Collection<PtFitFunc> sensorFitFuncSet;
+	
+	/**
+	 * 传感器温度预测函数映射表（传感器ID -> 温度预测函数）
+	 */
 	private volatile Map<String, PtFitFunc> sensorFitFuncMap;
 
+	/**
+	 * 评估结果映射表（解决方案名称 -> 评估结果）
+	 */
 	private Map<String, EvaluteResult> evaluteResultMap = Collections
 			.synchronizedMap(new LinkedHashMap<String, EvaluteResult>());
 
+	/**
+	 * 私有构造函数，防止外部实例化
+	 */
 	private DataFactory() {
 
 	}
 
 	/**
-	 * 单例获取实例
+	 * 获取DataFactory单例实例
 	 * 
-	 * @return
+	 * 采用双重检查锁定机制确保线程安全
+	 * 
+	 * @return DataFactory单例实例
 	 */
 	public static DataFactory getInstance() {
 		if (dataFactory != null) {
@@ -70,10 +122,11 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 从配置文件中获取用户自定义的舒适度函数的集合
+	 * 从配置文件中获取用户自定义的舒适度函数集合
 	 * 
-	 * @param resourceName
-	 * @return
+	 * 该方法会解析用户舒适度温度数据文件，生成用户舒适度函数集合
+	 * 
+	 * @return 用户舒适度函数集合
 	 */
 	public Collection<UserComfortFunc> getUserComfortFuncCollection() {
 		if (userComfortFuncSet != null) {
@@ -96,6 +149,15 @@ public final class DataFactory {
 		return userComfortFuncSet;
 	}
 
+	/**
+	 * 生成用户舒适度函数集合
+	 * 
+	 * 从指定资源文件中读取用户舒适度数据，解析生成用户舒适度函数集合
+	 * 
+	 * @param resourceName 资源文件名
+	 * @return 用户舒适度函数集合
+	 * @throws IOException 文件读取异常
+	 */
 	private Collection<UserComfortFunc> genUserComfortFuncSet(String resourceName)
 			throws IOException {
 		Collection<UserComfortFunc> userComfortFuncCollection = new ArrayList<UserComfortFunc>();
@@ -113,8 +175,9 @@ public final class DataFactory {
 	}
 
 	/**
+	 * 获取用户舒适度函数映射表
 	 * 
-	 * @return
+	 * @return 用户舒适度函数映射表（用户ID -> 舒适度函数）
 	 */
 	public Map<String, UserComfortFunc> getUserComfortFuncMap() {
 		if (userComfortFuncMap != null) {
@@ -126,6 +189,11 @@ public final class DataFactory {
 		return userComfortFuncMap;
 	}
 
+	/**
+	 * 获取用户期望温度映射表
+	 * 
+	 * @return 用户期望温度映射表（用户ID -> 期望温度）
+	 */
 	public Map<String, Float> getUserWantTempMap() {
 		if (userWantTempMap != null) {
 			return userWantTempMap;
@@ -137,9 +205,9 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 注册节点的拟合函数集合
+	 * 注册传感器的温度预测函数集合
 	 * 
-	 * @param registerFitFuncOfPTSet
+	 * @param registerFitFuncOfPTSet 温度预测函数集合
 	 */
 	public void registerFitFunc(Collection<PtFitFunc> registerFitFuncOfPTSet) {
 		sensorFitFuncSet = registerFitFuncOfPTSet;
@@ -150,9 +218,9 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取节点的拟合函数集合
+	 * 获取传感器的温度预测函数集合
 	 * 
-	 * @return
+	 * @return 温度预测函数集合
 	 */
 	public Collection<PtFitFunc> getSensorFitFuncSet() {
 		if (sensorFitFuncSet == null) {
@@ -163,9 +231,9 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取节点的拟合函数的Map
+	 * 获取传感器的温度预测函数映射表
 	 * 
-	 * @return
+	 * @return 温度预测函数映射表（传感器ID -> 温度预测函数）
 	 */
 	public Map<String, PtFitFunc> getSensorFitFuncMap() {
 		if (sensorFitFuncMap == null) {
@@ -175,6 +243,15 @@ public final class DataFactory {
 
 	}
 
+	/**
+	 * 生成地理位置信息表
+	 * 
+	 * 从指定资源文件中读取地理位置数据，解析生成地理位置信息映射表
+	 * 
+	 * @param resourceName 资源文件名
+	 * @return 地理位置信息映射表（ID -> 地理位置）
+	 * @throws IOException 文件读取异常
+	 */
 	private Map<String, GeoPoint> genGeoInfoTable(String resourceName) throws IOException {
 		Map<String, GeoPoint> geoInfoTable = new HashMap<String, GeoPoint>();
 		try (BufferedReader reader = ResourceUtil.loadTxtResource(resourceName)) {
@@ -188,9 +265,9 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取传感器id的集合
+	 * 获取传感器ID集合
 	 * 
-	 * @return
+	 * @return 传感器ID集合
 	 */
 	public Set<String> getSensorIdSet() {
 		Map<String, GeoPoint> sensorGeoTbale = getSensorGeoInfo();
@@ -198,9 +275,11 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取用户id周围一定范围内的传感器id列表的map表
+	 * 获取用户ID周围一定范围内的传感器ID列表的映射表
 	 * 
-	 * @return
+	 * 根据用户和传感器的地理位置信息，计算每个用户周围范围内的传感器列表
+	 * 
+	 * @return 用户ID与周围传感器ID列表的映射表
 	 */
 	public Map<String, List<String>> getSensorIdsByUserId() {
 		if (userIdSensorIdsMap != null) {
@@ -230,9 +309,11 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取用户id周围一定范围内的传感器的功率-温度映射函数的map表
+	 * 获取用户ID周围一定范围内的传感器的功率-温度映射函数的映射表
 	 * 
-	 * @return
+	 * 根据用户和传感器的地理位置信息，计算每个用户周围范围内的传感器温度预测函数列表
+	 * 
+	 * @return 用户ID与周围传感器温度预测函数列表的映射表
 	 */
 	public Map<String, List<PtFitFunc>> getSensorFuncByUserId() {
 		if (userIdSensorFuncsMap != null) {
@@ -262,6 +343,11 @@ public final class DataFactory {
 		return userIdSensorFuncsMap;
 	}
 
+	/**
+	 * 获取用户地理位置信息映射表
+	 * 
+	 * @return 用户地理位置信息映射表（用户ID -> 地理位置）
+	 */
 	private Map<String, GeoPoint> getUserGeoInfo() {
 		if (userGeoTable != null) {
 			return userGeoTable;
@@ -277,6 +363,11 @@ public final class DataFactory {
 		return userGeoTable;
 	}
 
+	/**
+	 * 获取传感器地理位置信息映射表
+	 * 
+	 * @return 传感器地理位置信息映射表（传感器ID -> 地理位置）
+	 */
 	private Map<String, GeoPoint> getSensorGeoInfo() {
 		if (sensorGeoTbale != null) {
 			return sensorGeoTbale;
@@ -293,9 +384,9 @@ public final class DataFactory {
 	}
 
 	/**
-	 * 获取功率调度的范围约束
+	 * 获取功率调度的范围约束数组
 	 * 
-	 * @return
+	 * @return 功率范围数组
 	 */
 	public PowerRange[] getPowerRangeArray() {
 		if (powerRangeArray != null) {
@@ -312,21 +403,28 @@ public final class DataFactory {
 	}
 
 	/**
+	 * 获取评估结果映射表
 	 * 
-	 * @return
+	 * @return 评估结果映射表（解决方案名称 -> 评估结果）
 	 */
 	public Map<String, EvaluteResult> getEvaluteResultMap() {
 		return evaluteResultMap;
 	}
 
 	/**
+	 * 添加评估结果
 	 * 
-	 * @param evaluteResult
+	 * @param evaluteResult 评估结果
 	 */
 	public void addEvaluteResult(EvaluteResult evaluteResult) {
 		evaluteResultMap.put(evaluteResult.getSolutionName(), evaluteResult);
 	}
 
+	/**
+	 * 主函数，用于测试
+	 * 
+	 * @param args 命令行参数
+	 */
 	public static void main(String[] args) {
 
 	}

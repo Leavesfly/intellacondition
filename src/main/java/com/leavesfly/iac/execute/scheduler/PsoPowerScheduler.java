@@ -10,10 +10,25 @@ import com.leavesfly.iac.execute.PowerScheduler;
 import com.leavesfly.iac.execute.scheduler.pso.Particle;
 import com.leavesfly.iac.execute.scheduler.pso.PsoAlgorithm;
 
+/**
+ * PSO功率调度器类
+ * 
+ * 该类实现了基于粒子群优化算法的空调功率调度器，
+ * 可以选择使用标准粒子或改进粒子进行优化计算。
+ */
 public class PsoPowerScheduler implements PowerScheduler {
 
+	/**
+	 * PSO算法实例
+	 */
 	private PsoAlgorithm<PowerValue> psoAlgorithm;
 
+	/**
+	 * 构造函数
+	 * 
+	 * @param initParticleNum 初始粒子数量
+	 * @param isImprovedParticle 是否使用改进粒子
+	 */
 	public PsoPowerScheduler(int initParticleNum, boolean isImprovedParticle) {
 
 		DataFactory dataFactory = DataFactory.getInstance();
@@ -35,6 +50,13 @@ public class PsoPowerScheduler implements PowerScheduler {
 		psoAlgorithm = new PsoAlgorithm<PowerValue>(ParticleSet);
 	}
 
+	/**
+	 * 执行功率调度算法
+	 * 
+	 * 使用PSO算法寻找最优的功率配置，并返回最优功率向量
+	 * 
+	 * @return 最优功率向量
+	 */
 	@Override
 	public PowerVector schedule() {
 		PowerValue[] bestLocation = psoAlgorithm
@@ -42,6 +64,11 @@ public class PsoPowerScheduler implements PowerScheduler {
 		return new PowerVector(bestLocation);
 	}
 
+	/**
+	 * 主函数，用于测试
+	 * 
+	 * @param args 命令行参数
+	 */
 	public static void main(String[] args) {
 
 		final int initParticleNum = 10;

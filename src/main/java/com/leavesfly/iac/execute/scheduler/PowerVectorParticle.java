@@ -7,11 +7,18 @@ import com.leavesfly.iac.domain.PowerVector;
 import com.leavesfly.iac.evalute.Evaluator;
 import com.leavesfly.iac.execute.scheduler.pso.Particle;
 
+/**
+ * 功率向量粒子类
+ * 
+ * 该类表示PSO算法中的一个粒子，代表一个功率向量配置。
+ * 继承自Particle类，实现了特定于功率向量的初始化和目标值计算方法。
+ */
 public class PowerVectorParticle extends Particle<PowerValue> {
 
 	/**
+	 * 构造函数
 	 * 
-	 * @param powerRangeVector
+	 * @param powerRangeArray 功率范围数组
 	 */
 	public PowerVectorParticle(final PowerRange[] powerRangeArray) {
 		super();
@@ -19,6 +26,14 @@ public class PowerVectorParticle extends Particle<PowerValue> {
 		init(location);
 	}
 
+	/**
+	 * 初始化向量值
+	 * 
+	 * 根据功率范围数组初始化功率值数组
+	 * 
+	 * @param powerRangeArray 功率范围数组
+	 * @return 初始化的功率值数组
+	 */
 	private PowerValue[] initVectorValue(PowerRange[] powerRangeArray) {
 		PowerValue[] location = new PowerValue[powerRangeArray.length];
 		for (int i = 0; i < location.length; i++) {
@@ -27,6 +42,15 @@ public class PowerVectorParticle extends Particle<PowerValue> {
 		return location;
 	}
 
+	/**
+	 * 计算目标值
+	 * 
+	 * 根据功率值数组计算粒子的目标值（适应度值），
+	 * 结合用户满意度和用电成本进行加权计算
+	 * 
+	 * @param powerValueArray 功率值数组
+	 * @return 目标值
+	 */
 	@Override
 	protected float calTargetValue(PowerValue[] powerValueArray) {
 

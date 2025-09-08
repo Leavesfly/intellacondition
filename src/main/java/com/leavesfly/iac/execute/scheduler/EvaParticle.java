@@ -5,8 +5,18 @@ import com.leavesfly.iac.domain.PowerValue;
 import com.leavesfly.iac.domain.RangeValue;
 import com.leavesfly.iac.execute.scheduler.pso.Particle;
 
+/**
+ * 评估粒子类
+ * 
+ * 该类是一个用于测试和评估的粒子实现，使用简单的平方和函数作为目标函数。
+ */
 public class EvaParticle extends Particle<RangeValue> {
 
+	/**
+	 * 构造函数
+	 * 
+	 * @param powerRangeArray 功率范围数组
+	 */
 	public EvaParticle(final PowerRange[] powerRangeArray) {
 		super();
 		PowerValue[] location = new PowerValue[powerRangeArray.length];
@@ -16,6 +26,14 @@ public class EvaParticle extends Particle<RangeValue> {
 		init(location);
 	}
 
+	/**
+	 * 计算目标值
+	 * 
+	 * 使用平方和函数计算目标值：f(x) = x1^2 + x2^2 + ... + xn^2
+	 * 
+	 * @param location 位置数组
+	 * @return 目标值
+	 */
 	@Override
 	protected float calTargetValue(RangeValue[] location) {
 		float satisfaction = 0f;

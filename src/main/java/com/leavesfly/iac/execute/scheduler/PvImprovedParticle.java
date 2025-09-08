@@ -6,13 +6,16 @@ import com.leavesfly.iac.domain.PowerValue;
 import com.leavesfly.iac.util.MathUtil;
 
 /**
- * 混沌粒子
+ * 改进的功率向量粒子类（混沌粒子）
  * 
- * @author LeavesFly
- *
+ * 该类表示一种改进的PSO粒子，引入了混沌变量来增强算法的全局搜索能力，
+ * 避免陷入局部最优解。
  */
 public class PvImprovedParticle extends PowerVectorParticle {
 
+	/**
+	 * 混沌变量数组
+	 */
 	private final static float[] rmChaoticVariable;
 
 	static {
@@ -22,10 +25,26 @@ public class PvImprovedParticle extends PowerVectorParticle {
 		}
 	}
 
+	/**
+	 * 混沌变量m
+	 */
 	private float[] mchaoticVariable;
+	
+	/**
+	 * 混沌变量um
+	 */
 	private final float[] umChaoticVariable;
+	
+	/**
+	 * 混沌变量s
+	 */
 	private final float sChaoticVariable;
 
+	/**
+	 * 构造函数
+	 * 
+	 * @param powerRangeVector 功率范围数组
+	 */
 	public PvImprovedParticle(PowerRange[] powerRangeVector) {
 		super(powerRangeVector);
 
@@ -38,6 +57,13 @@ public class PvImprovedParticle extends PowerVectorParticle {
 		sChaoticVariable = 0.3f;
 	}
 
+	/**
+	 * 生成新速度
+	 * 
+	 * 根据全局最优位置和混沌变量计算新的粒子速度
+	 * 
+	 * @param globalBestLocation 全局最优位置
+	 */
 	@Override
 	protected void genNewSpeed(PowerValue[] globalBestLocation) {
 		for (int i = 0; i < globalBestLocation.length; i++) {
@@ -57,6 +83,11 @@ public class PvImprovedParticle extends PowerVectorParticle {
 		}
 	}
 
+	/**
+	 * 生成新位置
+	 * 
+	 * 根据混沌变量和当前状态计算新的粒子位置
+	 */
 	@Override
 	protected void genNewLocation() {
 
