@@ -1,176 +1,342 @@
-#intellacondition#
-智能空调仿真平台
+# 智能空调仿真平台 (IntelliAirCondition)
 
-## 项目概述
+[![Java](https://img.shields.io/badge/Java-1.7+-blue.svg)](https://www.oracle.com/java/)
+[![Maven](https://img.shields.io/badge/Maven-3.0+-green.svg)](https://maven.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-IntelliCondition 是一个基于机器学习和粒子群优化算法(PSO)的智能空调仿真平台。该系统通过训练功率-温度映射函数，并使用PSO算法优化空调功率分配，实现最佳的温度控制效果和能耗平衡。
+一个基于机器学习和粒子群优化算法的智能空调功率调度仿真平台，支持多种优化策略和实时性能评估。
 
-## 核心特性
+## 🎯 项目概述
 
-- 🧠 **智能训练模块** - 基于历史数据训练功率-温度映射函数
-- 🔧 **PSO优化算法** - 使用粒子群优化和混沌PSO算法寻找最优功率分配
-- 👤 **个性化舒适度** - 支持用户个性化温度偏好设置
-- 📊 **多策略评估** - 提供个性化和全局优化两种模式
-- 📈 **数据可视化** - 集成JFreeChart提供结果展示和分析
-- 🔄 **多线程处理** - 支持并发训练和调度执行
+智能空调仿真平台是一个综合性的空调系统优化解决方案，集成了：
 
-## 技术架构
+- **机器学习模型训练** - BP神经网络、线性回归等多种算法
+- **智能功率调度** - PSO粒子群优化算法
+- **多维度性能评估** - 用户满意度、能耗成本综合评估
+- **实时数据可视化** - JFreeChart图表展示
+- **并发处理架构** - 高性能多线程计算
 
-### 系统组成
-```
-IntelliCondition
-├── 训练模块 (Train Module)
-│   ├── 数据收集 (DataCollecter)
-│   ├── 数据存储 (Lucene-based Storage)
-│   ├── 功率-温度函数训练 (PtTrainer)
-│   └── 多线程训练器 (PtMultiThreadTrainer)
-├── 执行模块 (Execute Module)
-│   ├── 功率调度器 (PowerScheduler)
-│   ├── PSO算法实现 (PsoPowerScheduler)
-│   └── 用户舒适度模块 (ContiUserComfortFunc)
-├── 评估模块 (Evaluate Module)
-│   ├── 解决方案构建器 (SolutionBuilder)
-│   └── 评估器 (Evaluator)
-└── 展示模块 (Display Module)
-    ├── 数据可视化 (JFreeChart)
-    └── 结果输出
-```
+> **重要更新**: 本项目已经进行全面重构，采用现代化架构设计，提供更优雅的API和更高的性能。新的[IntelliAirConditionApp](src/main/java/com/leavesfly/iac/IntelliAirConditionApp.java)提供更好的使用体验。
 
-### 核心算法
-- **PSO粒子群优化算法** - 寻找最优功率分配方案
-- **混沌PSO算法** - 改进的PSO算法实现，提高收敛性能
-- **BP神经网络** - 3层神经网络训练功率-温度映射函数
-- **线性回归(LR)模型** - 备选的训练模型
+## 🏗️ 系统架构
 
-## 技术栈
-
-- **Java 1.7** - 核心开发语言
-- **Maven** - 项目构建和依赖管理
-- **Apache Lucene 3.6.0** - 训练数据存储和检索
-- **Weka 3.6.10** - 机器学习算法库
-- **JFreeChart 1.0.7** - 数据可视化
-- **Apache Commons Lang 2.6** - 工具类库
-- **JUnit 4.5** - 单元测试
-
-## 项目结构
+### 核心模块
 
 ```
-src/main/java/com/leavesfly/iac/
-├── IntelliAirCondition.java    # 主程序入口
-├── config/                     # 配置常量
-│   ├── AppContextConstant.java
-│   ├── BpAlgorithmConstant.java
-│   └── PsoAlgorithmConstant.java
-├── datasource/                 # 数据工厂
-│   └── DataFactory.java
-├── domain/                     # 领域模型
-│   ├── PowerVector.java
-│   ├── PowerValue.java
-│   ├── PtFitFunc.java
-│   └── UserTempRange.java
-├── train/                      # 训练模块
-│   ├── collect/               # 数据收集
-│   ├── domain/                # 训练数据模型
-│   ├── store/                 # 数据存储(Lucene)
-│   └── trainer/               # 训练器实现
-├── execute/                    # 执行模块
-│   ├── scheduler/             # 调度器实现
-│   └── domain/                # 执行相关模型
-├── evalute/                    # 评估模块
-├── display/                    # 展示模块
-└── util/                       # 工具类
+graph TB
+    subgraph "表现层"
+        UI[用户界面]
+        RD[结果展示器]
+    end
+    subgraph "业务逻辑层"
+        IAC[IntelliAirCondition<br/>主控制器]
+        DF[DataFactory<br/>数据工厂]
+        EVAL[Evaluator<br/>评估器]
+    end
+    subgraph "算法层"
+        PT[PtTrainer<br/>训练器]
+        PSO[PsoAlgorithm<br/>PSO算法]
+        BP[BpWekaModel<br/>BP神经网络]
+    end
+    subgraph "数据层"
+        DC[DataCollecter<br/>数据收集器]
+        TSM[TrainDataSetManager<br/>数据集管理器]
+        RES[ResourceUtil<br/>资源工具]
+    end
+    UI --> IAC
+    IAC --> DF
+    IAC --> EVAL
+    IAC --> PT
+    IAC --> PSO
+    PT --> BP
+    PT --> DC
+    DC --> TSM
+    DC --> RES
+    EVAL --> DF
+    RD --> EVAL
 ```
 
-## 系统约束
+### 技术栈
 
-1. **功率范围**: 空调终端功率取值范围 0-400W
-2. **温度区间**: 支持温度范围 15-35°C
-3. **外部温度**: 预设外部温度为 35°C
-4. **功率规约**: 计算时功率值规约到 0-1 之间
+- **核心语言**: Java 1.7+
+- **构建工具**: Maven 3.0+
+- **机器学习**: Weka 3.6.10
+- **数据检索**: Apache Lucene 3.6.0
+- **数据可视化**: JFreeChart 1.0.7
+- **工具库**: Apache Commons Lang 2.6
+- **测试框架**: JUnit 4.5
 
-## 快速开始
+## 🚀 快速开始
 
 ### 环境要求
-- Java 1.7+
-- Maven 3.x
 
-### 编译和运行
+- Java JDK 1.7 或更高版本
+- Maven 3.0 或更高版本
+- 至少 2GB 可用内存
 
-```bash
-# 克隆项目
-git clone <repository-url>
-cd intellacondition
+### 安装步骤
 
-# 编译项目
-mvn clean compile
+1. **克隆项目**
+   ```bash
+   git clone <repository-url>
+   cd intellacondition
+   ```
 
-# 运行主程序
-mvn exec:java -Dexec.mainClass="com.leavesfly.iac.IntelliAirCondition"
+2. **编译项目**
+   ```bash
+   mvn clean compile
+   ```
 
-# 或者直接运行
-java -cp target/classes com.leavesfly.iac.IntelliAirCondition
-```
+3. **运行测试**
+   ```bash
+   mvn test
+   ```
 
-## 系统工作流程
+4. **启动仿真**
+   ```bash
+   # 传统模式
+   mvn exec:java -Dexec.mainClass="com.leavesfly.iac.IntelliAirCondition"
+   
+   # 现代化模式（推荐）
+   mvn exec:java -Dexec.mainClass="com.leavesfly.iac.IntelliAirConditionApp"
+   
+   # 异步模式
+   mvn exec:java -Dexec.mainClass="com.leavesfly.iac.IntelliAirConditionApp" -Dexec.args="async"
+   ```
 
-### 1. 训练阶段 (trainPhase)
-- 从文本文件收集训练数据
-- 使用Lucene存储训练数据集
-- 通过多线程训练器构建功率-温度映射函数
-- 支持BP神经网络和LR模型
+### 使用示例
 
-### 2. 调度阶段 (schedulePhase)
-- **个性化方案**: 根据用户温度偏好生成解决方案
-- **PSO优化**: 使用标准PSO算法寻找最优功率向量
-- **混沌PSO优化**: 使用改进的混沌PSO算法
-- 并发执行多种优化策略
-
-### 3. 展示阶段 (displayPhase)
-- 输出各种解决方案的评估结果
-- 显示总满意度、总功耗成本和功率效用
-
-## 实验结果示例
-
-系统会输出类似以下的优化结果：
+#### 基础使用
 
 ```
-solution_pso:[221.3,96.7,261.1,40.4,171.4,126.3,50.5,217.5]
-totalSatisfaction:8.365845  totalPowerCost:1185.2312  powerUtility:7.058408
+// 创建智能空调仿真实例
+IntelliAirCondition simulation = new IntelliAirCondition();
 
-solution_pso_chaos:[131.2,143.0,202.2,143.1,159.6,141.6,105.9,141.8]
-totalSatisfaction:8.24261  totalPowerCost:1168.3904  powerUtility:7.0546713
+// 执行完整的仿真流程
+simulation.trainPhase();    // 训练阶段
+simulation.schedulePhase(); // 调度阶段
+simulation.displayPhase();  // 展示阶段
 ```
 
-## 核心类说明
+#### 现代化API（推荐）
 
-- **IntelliAirCondition**: 主程序入口，协调训练、调度和展示三个阶段
-- **DataFactory**: 线程安全的数据工厂，管理全局数据
-- **PsoPowerScheduler**: PSO算法实现，支持标准和混沌两种模式
-- **PtMultiThreadTrainer**: 多线程训练器，支持并发模型训练
-- **Evaluator**: 评估器，计算解决方案的各项指标
+```
+// 使用门面模式的现代化API
+IntelliAirConditionFacade facade = new IntelliAirConditionFacade(
+    new DefaultModelTrainingService(),
+    new PsoSchedulingService(),
+    new DefaultEvaluationService()
+);
 
-## 扩展功能
+// 一键式优化
+OptimizationResult result = facade.optimizeAirCondition();
+System.out.println("优化结果: " + result);
 
-- 支持多种机器学习模型(BP神经网络、线性回归)
-- 可配置的PSO算法参数
-- 灵活的用户舒适度函数
-- 完整的数据可视化支持
+// 异步优化
+facade.optimizeAirConditionAsync()
+    .thenAccept(res -> System.out.println("异步优化完成: " + res))
+    .exceptionally(ex -> {
+        System.err.println("优化失败: " + ex.getMessage());
+        return null;
+    });
+```
 
-## 开发计划
+## 📊 核心功能
 
-- [x] 训练模块 - 数据收集和功率-温度函数训练
-- [x] 执行模块 - PSO算法实现和功率向量优化
-- [x] 评估模块 - 多策略评估和结果分析
-- [x] 展示模块 - 数据可视化和结果输出
+### 1. 模型训练模块
 
-## 许可证
+- **数据收集**: 从多种数据源收集训练数据
+- **数据存储**: 基于Lucene的高效数据存储和检索
+- **多模型支持**: BP神经网络、Weka集成、线性回归
+- **并行训练**: 多线程并行训练提升效率
 
-本项目采用开源许可证，具体信息请查看 LICENSE 文件。
+### 2. 功率调度模块
 
-## 贡献
+- **PSO算法**: 标准粒子群优化算法
+- **改进PSO**: 混沌粒子群优化算法
+- **实时调度**: 支持实时功率调度优化
+- **约束处理**: 功率范围约束和用户需求约束
 
-欢迎提交 Issue 和 Pull Request 来改进项目。
+### 3. 性能评估模块
+
+- **多维评估**: 用户满意度、功耗成本综合评估
+- **实时计算**: 高效的评估算法
+- **结果比较**: 多种解决方案性能对比
+- **可视化展示**: 图表化的结果展示
+
+### 4. 数据可视化
+
+- **拟合曲线**: 功率-温度关系可视化
+- **性能对比**: 不同算法性能对比图
+- **实时监控**: 系统运行状态监控
+
+## 📁 项目结构
+
+```
+src/
+├── main/java/com/leavesfly/iac/
+│   ├── IntelliAirCondition.java          # 主程序入口（传统）
+│   ├── IntelliAirConditionApp.java       # 主程序入口（现代化）
+│   ├── config/                           # 配置管理
+│   │   ├── AppConfig.java               # 应用配置
+│   │   ├── PsoConfig.java               # PSO算法配置
+│   │   └── BpConfig.java                # BP神经网络配置
+│   ├── datasource/                       # 数据源管理
+│   │   ├── DataFactory.java            # 数据工厂
+│   │   ├── DomainParser.java            # 数据解析器
+│   │   └── datagene/                    # 数据生成工具
+│   ├── domain/                          # 领域模型
+│   │   ├── GeoPoint.java               # 地理坐标
+│   │   ├── PowerVector.java            # 功率向量
+│   │   ├── PtFitFunc.java              # 功率-温度拟合函数
+│   │   └── improved/                   # 改进的领域模型
+│   ├── train/                           # 训练模块
+│   │   ├── trainer/                    # 训练器
+│   │   ├── collect/                    # 数据收集
+│   │   └── store/                      # 数据存储
+│   ├── execute/                         # 执行模块
+│   │   └── scheduler/                  # 调度器
+│   ├── evalute/                         # 评估模块
+│   ├── display/                         # 显示模块
+│   ├── service/                         # 服务层（新）
+│   ├── facade/                          # 门面层（新）
+│   ├── async/                           # 异步处理（新）
+│   ├── repository/                      # 数据访问层（新）
+│   └── exception/                       # 异常处理（新）
+└── test/                                # 测试代码
+```
+
+## ⚙️ 配置说明
+
+### 系统参数配置
+
+```
+// 环境参数
+AREA_LENGTH = 10        // 区域长度（米）
+AREA_WIDTH = 10         // 区域宽度（米）
+USER_NUM = 16          // 用户数量
+SENSOR_NUM = 10        // 传感器数量
+AIR_CONDITION_NUM = 8  // 空调数量
+
+// 算法参数
+OUTSIDE_TEMP = 35.0f   // 室外温度（摄氏度）
+POWER_PRICE = 1.0f     // 电费单价
+SATISFY_WEIGHT = 0.5f  // 满意度权重
+```
+
+### PSO算法参数
+
+```
+PSO_INIT_PARTICLE_NUM = 30  // 初始粒子数量
+PSO_ITERATE_NUM = 300       // 迭代次数
+W = 0.9f                    // 惯性权重
+C1 = 2.0f                   // 学习因子1
+C2 = 2.0f                   // 学习因子2
+```
+
+## 🧪 运行示例
+
+### 控制台输出示例
+
+```
+=== 智能空调仿真平台启动（同步模式）===
+
+=== 开始模型训练 ===
+训练完成，生成 10 个预测模型
+
+=== 开始功率调度优化 ===
+调度完成，总功率：2150.50，平均功率：268.81
+
+=== 开始结果评估 ===
+
+=== 优化完成 ===
+OptimizationResult{模型数量=10, 总功率=2150.50, 平均功率=268.81}
+总用时：3247 毫秒
+```
+
+### 性能指标
+
+- **用户满意度**: 基于温度舒适度函数计算
+- **功耗成本**: 总功率消耗 × 电费单价
+- **功率效用**: 单位功耗的用户满意度提升
+- **算法收敛性**: PSO算法的收敛曲线分析
+
+## 🔧 开发指南
+
+### 扩展新的训练模型
+
+```
+public class CustomModel implements TrainModel {
+    @Override
+    public <T extends TrainDataItem<Float, Float>> void train(Collection<T> trainDataSet) {
+        // 实现自定义训练逻辑
+    }
+    
+    @Override
+    public <T extends Number> float useMode(T[] feature) {
+        // 实现预测逻辑
+        return prediction;
+    }
+}
+```
+
+### 添加新的优化算法
+
+```
+public class CustomScheduler implements PowerScheduler {
+    @Override
+    public PowerVector schedule() {
+        // 实现自定义调度算法
+        return optimizedPowerVector;
+    }
+}
+```
+
+## 📈 性能优化
+
+- **并行计算**: 多线程训练和评估
+- **内存优化**: 懒加载和对象池技术
+- **算法优化**: 改进的PSO算法收敛更快
+- **缓存机制**: 计算结果缓存减少重复计算
+
+## 🔄 架构重构
+
+本项目已进行全面现代化重构，主要改进包括：
+
+- **配置管理**: 统一的类型安全配置系统
+- **领域模型**: 不可变对象设计，增强线程安全
+- **服务层**: 依赖注入和接口抽象
+- **异步处理**: 现代化的CompletableFuture API
+- **门面模式**: 简化的客户端API
+- **异常处理**: 统一的异常处理策略
+
+详细重构说明请参考 [REFACTORING_GUIDE.md](REFACTORING_GUIDE.md)
+
+## 🤝 贡献指南
+
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+
+## 📞 联系方式
+
+- 项目主页: [GitHub Repository](https://github.com/username/intellacondition)
+- 问题反馈: [Issues](https://github.com/username/intellacondition/issues)
+- 邮箱: your.email@example.com
+
+## 🙏 致谢
+
+- [Apache Lucene](https://lucene.apache.org/) - 高性能全文检索引擎
+- [Weka](https://www.cs.waikato.ac.nz/ml/weka/) - 机器学习工具包
+- [JFreeChart](http://www.jfree.org/jfreechart/) - Java图表库
+- [Apache Commons](https://commons.apache.org/) - Java实用工具库
 
 ---
 
-*IntelliCondition - 让智能空调更智能* 🌡️
+**注意**: 本项目已进行全面重构，新增现代化API和架构。详细重构说明请参考 [REFACTORING_GUIDE.md](REFACTORING_GUIDE.md)

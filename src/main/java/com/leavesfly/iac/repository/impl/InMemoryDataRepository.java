@@ -37,31 +37,31 @@ public class InMemoryDataRepository implements DataRepository {
     public Collection<UserComfortFunc> getUserComfortFunctions() {
         // TODO: 实现用户舒适度函数加载逻辑
         // 这里需要整合原有的数据解析逻辑
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户舒适度函数加载\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户舒适度函数加载");
     }
 
     @Override
     public Map<String, UserComfortFunc> getUserComfortFunctionMap() {
         // TODO: 实现用户舒适度函数映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户舒适度函数映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户舒适度函数映射");
     }
 
     @Override
     public Map<String, Float> getUserWantTemperatureMap() {
         // TODO: 实现用户期望温度映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户期望温度映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户期望温度映射");
     }
 
     @Override
     public Map<String, GeoPoint> getUserGeoLocations() {
         // TODO: 实现用户地理位置映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户地理位置映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户地理位置映射");
     }
 
     @Override
     public Map<String, GeoPoint> getSensorGeoLocations() {
         // TODO: 实现传感器地理位置映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现传感器地理位置映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现传感器地理位置映射");
     }
 
     @Override
@@ -72,12 +72,12 @@ public class InMemoryDataRepository implements DataRepository {
     @Override
     public Map<String, Collection<String>> getUserSensorMapping() {
         // TODO: 实现用户-传感器映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户-传感器映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户-传感器映射");
     }
 
     @Override
     public PowerRange[] getPowerRanges() {
-        return computeIfAbsent(\"power_ranges\", () -> {
+        return computeIfAbsent("power_ranges", () -> {
             AppConfig.PowerConfig powerConfig = config.getPower();
             PowerRange[] ranges = new PowerRange[config.getDevice().getAirConditionNum()];
             
@@ -95,7 +95,7 @@ public class InMemoryDataRepository implements DataRepository {
     @Override
     public void registerFitFunctions(Collection<PtFitFunc> fitFunctions) {
         if (fitFunctions == null) {
-            throw new IntelliAirConditionException(\"IAC_DATA\", \"温度预测函数集合不能为null\");
+            throw new IntelliAirConditionException("IAC_DATA", "温度预测函数集合不能为null");
         }
         
         this.sensorFitFunctions = fitFunctions;
@@ -110,7 +110,7 @@ public class InMemoryDataRepository implements DataRepository {
     @Override
     public Collection<PtFitFunc> getSensorFitFunctions() {
         if (sensorFitFunctions == null) {
-            throw new IntelliAirConditionException(\"IAC_DATA\", \"温度预测函数尚未注册\");
+            throw new IntelliAirConditionException("IAC_DATA", "温度预测函数尚未注册");
         }
         return sensorFitFunctions;
     }
@@ -118,7 +118,7 @@ public class InMemoryDataRepository implements DataRepository {
     @Override
     public Map<String, PtFitFunc> getSensorFitFunctionMap() {
         if (sensorFitFunctionMap == null) {
-            throw new IntelliAirConditionException(\"IAC_DATA\", \"温度预测函数映射尚未初始化\");
+            throw new IntelliAirConditionException("IAC_DATA", "温度预测函数映射尚未初始化");
         }
         return sensorFitFunctionMap;
     }
@@ -126,13 +126,13 @@ public class InMemoryDataRepository implements DataRepository {
     @Override
     public Map<String, Collection<PtFitFunc>> getUserSensorFunctionMapping() {
         // TODO: 实现用户-传感器函数映射
-        throw new IntelliAirConditionException(\"IAC_DATA\", \"尚未实现用户-传感器函数映射\");
+        throw new IntelliAirConditionException("IAC_DATA", "尚未实现用户-传感器函数映射");
     }
 
     /**
      * 线程安全的缓存计算
      */
-    @SuppressWarnings(\"unchecked\")
+    @SuppressWarnings("unchecked")
     private <T> T computeIfAbsent(String key, java.util.function.Supplier<T> supplier) {
         return (T) cache.computeIfAbsent(key, k -> supplier.get());
     }
