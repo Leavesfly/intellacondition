@@ -22,13 +22,13 @@ import com.leavesfly.iac.execute.domain.UserComfortFunc;
 
 /**
  * 数据工厂类
- * 
+ *
  * 该类是系统的核心数据提供者和中转站，负责：
  * 1. 加载和管理用户舒适度函数
  * 2. 管理地理位置信息（用户和传感器）
  * 3. 管理温度预测模型函数
  * 4. 存储和提供评估结果
- * 
+ *
  * 采用单例模式确保全局唯一实例
  */
 public final class DataFactory {
@@ -42,12 +42,12 @@ public final class DataFactory {
 	 * 用户舒适度函数集合
 	 */
 	private volatile Collection<UserComfortFunc> userComfortFuncSet;
-	
+
 	/**
 	 * 用户舒适度函数映射表（用户ID -> 舒适度函数）
 	 */
 	private volatile Map<String, UserComfortFunc> userComfortFuncMap;
-	
+
 	/**
 	 * 用户期望温度映射表（用户ID -> 期望温度）
 	 */
@@ -57,7 +57,7 @@ public final class DataFactory {
 	 * 用户地理位置映射表（用户ID -> 地理位置）
 	 */
 	private volatile Map<String, GeoPoint> userGeoTable;
-	
+
 	/**
 	 * 传感器地理位置映射表（传感器ID -> 地理位置）
 	 */
@@ -67,12 +67,12 @@ public final class DataFactory {
 	 * 用户ID与周围传感器ID列表的映射表
 	 */
 	private volatile Map<String, List<String>> userIdSensorIdsMap;
-	
+
 	/**
 	 * 用户ID与周围传感器温度预测函数列表的映射表
 	 */
 	private volatile Map<String, List<PtFitFunc>> userIdSensorFuncsMap;
-	
+
 	/**
 	 * 功率范围数组
 	 */
@@ -82,7 +82,7 @@ public final class DataFactory {
 	 * 传感器温度预测函数集合
 	 */
 	private volatile Collection<PtFitFunc> sensorFitFuncSet;
-	
+
 	/**
 	 * 传感器温度预测函数映射表（传感器ID -> 温度预测函数）
 	 */
@@ -103,9 +103,9 @@ public final class DataFactory {
 
 	/**
 	 * 获取DataFactory单例实例
-	 * 
+	 *
 	 * 采用双重检查锁定机制确保线程安全
-	 * 
+	 *
 	 * @return DataFactory单例实例
 	 */
 	public static DataFactory getInstance() {
@@ -123,9 +123,9 @@ public final class DataFactory {
 
 	/**
 	 * 从配置文件中获取用户自定义的舒适度函数集合
-	 * 
+	 *
 	 * 该方法会解析用户舒适度温度数据文件，生成用户舒适度函数集合
-	 * 
+	 *
 	 * @return 用户舒适度函数集合
 	 */
 	public Collection<UserComfortFunc> getUserComfortFuncCollection() {
@@ -151,9 +151,9 @@ public final class DataFactory {
 
 	/**
 	 * 生成用户舒适度函数集合
-	 * 
+	 *
 	 * 从指定资源文件中读取用户舒适度数据，解析生成用户舒适度函数集合
-	 * 
+	 *
 	 * @param resourceName 资源文件名
 	 * @return 用户舒适度函数集合
 	 * @throws IOException 文件读取异常
@@ -176,7 +176,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取用户舒适度函数映射表
-	 * 
+	 *
 	 * @return 用户舒适度函数映射表（用户ID -> 舒适度函数）
 	 */
 	public Map<String, UserComfortFunc> getUserComfortFuncMap() {
@@ -191,7 +191,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取用户期望温度映射表
-	 * 
+	 *
 	 * @return 用户期望温度映射表（用户ID -> 期望温度）
 	 */
 	public Map<String, Float> getUserWantTempMap() {
@@ -206,7 +206,7 @@ public final class DataFactory {
 
 	/**
 	 * 注册传感器的温度预测函数集合
-	 * 
+	 *
 	 * @param registerFitFuncOfPTSet 温度预测函数集合
 	 */
 	public void registerFitFunc(Collection<PtFitFunc> registerFitFuncOfPTSet) {
@@ -219,7 +219,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取传感器的温度预测函数集合
-	 * 
+	 *
 	 * @return 温度预测函数集合
 	 */
 	public Collection<PtFitFunc> getSensorFitFuncSet() {
@@ -232,7 +232,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取传感器的温度预测函数映射表
-	 * 
+	 *
 	 * @return 温度预测函数映射表（传感器ID -> 温度预测函数）
 	 */
 	public Map<String, PtFitFunc> getSensorFitFuncMap() {
@@ -245,9 +245,9 @@ public final class DataFactory {
 
 	/**
 	 * 生成地理位置信息表
-	 * 
+	 *
 	 * 从指定资源文件中读取地理位置数据，解析生成地理位置信息映射表
-	 * 
+	 *
 	 * @param resourceName 资源文件名
 	 * @return 地理位置信息映射表（ID -> 地理位置）
 	 * @throws IOException 文件读取异常
@@ -266,7 +266,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取传感器ID集合
-	 * 
+	 *
 	 * @return 传感器ID集合
 	 */
 	public Set<String> getSensorIdSet() {
@@ -276,9 +276,9 @@ public final class DataFactory {
 
 	/**
 	 * 获取用户ID周围一定范围内的传感器ID列表的映射表
-	 * 
+	 *
 	 * 根据用户和传感器的地理位置信息，计算每个用户周围范围内的传感器列表
-	 * 
+	 *
 	 * @return 用户ID与周围传感器ID列表的映射表
 	 */
 	public Map<String, List<String>> getSensorIdsByUserId() {
@@ -310,9 +310,9 @@ public final class DataFactory {
 
 	/**
 	 * 获取用户ID周围一定范围内的传感器的功率-温度映射函数的映射表
-	 * 
+	 *
 	 * 根据用户和传感器的地理位置信息，计算每个用户周围范围内的传感器温度预测函数列表
-	 * 
+	 *
 	 * @return 用户ID与周围传感器温度预测函数列表的映射表
 	 */
 	public Map<String, List<PtFitFunc>> getSensorFuncByUserId() {
@@ -345,7 +345,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取用户地理位置信息映射表
-	 * 
+	 *
 	 * @return 用户地理位置信息映射表（用户ID -> 地理位置）
 	 */
 	private Map<String, GeoPoint> getUserGeoInfo() {
@@ -365,7 +365,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取传感器地理位置信息映射表
-	 * 
+	 *
 	 * @return 传感器地理位置信息映射表（传感器ID -> 地理位置）
 	 */
 	private Map<String, GeoPoint> getSensorGeoInfo() {
@@ -385,7 +385,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取功率调度的范围约束数组
-	 * 
+	 *
 	 * @return 功率范围数组
 	 */
 	public PowerRange[] getPowerRangeArray() {
@@ -404,7 +404,7 @@ public final class DataFactory {
 
 	/**
 	 * 获取评估结果映射表
-	 * 
+	 *
 	 * @return 评估结果映射表（解决方案名称 -> 评估结果）
 	 */
 	public Map<String, EvaluteResult> getEvaluteResultMap() {
@@ -413,7 +413,7 @@ public final class DataFactory {
 
 	/**
 	 * 添加评估结果
-	 * 
+	 *
 	 * @param evaluteResult 评估结果
 	 */
 	public void addEvaluteResult(EvaluteResult evaluteResult) {
@@ -422,7 +422,7 @@ public final class DataFactory {
 
 	/**
 	 * 主函数，用于测试
-	 * 
+	 *
 	 * @param args 命令行参数
 	 */
 	public static void main(String[] args) {
